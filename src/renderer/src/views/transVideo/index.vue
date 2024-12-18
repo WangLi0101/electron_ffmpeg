@@ -71,32 +71,35 @@
       </el-form-item>
 
       <el-form-item label="压缩质量">
-        <el-slider v-model="form.quality" :min="1" :max="100" :format-tooltip="formatQuality" />
+        <div class="flex items-center space-x-2 w-full">
+          <el-slider
+            v-model="form.quality"
+            :min="1"
+            :max="100"
+            :format-tooltip="formatQuality"
+            class="flex-1"
+          />
+          <span class="text-gray-500 w-16 text-right">{{ bitrate }}</span>
+        </div>
       </el-form-item>
-
+      <el-form-item>
+        <div v-if="progress > 0" class="mt-6 p-4 bg-white rounded-lg shadow-md">
+          <el-progress :percentage="progress" />
+        </div>
+      </el-form-item>
       <el-form-item class="mb-0 text-center">
-        <el-button
-          type="primary"
-          :loading="isProcessing"
-          class="w-48 h-11 text-base"
-          @click="handleTransform"
-        >
-          开始转换
-        </el-button>
+        <div class="flex justify-center w-full">
+          <el-button type="primary" :loading="isProcessing" @click="handleTransform">
+            开始转换
+          </el-button>
+        </div>
       </el-form-item>
     </el-form>
-
-    <div v-if="progress > 0" class="mt-6 p-4 bg-white rounded-lg shadow-md">
-      <el-progress
-        :percentage="progress"
-        class="[&_.el-progress-bar__outer]:bg-gray-200 [&_.el-progress-bar__outer]:rounded-lg [&_.el-progress-bar__inner]:rounded-lg [&_.el-progress-bar__inner]:transition-all"
-      />
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile } from 'element-plus'
 const form = reactive({
@@ -153,4 +156,8 @@ const handleTransform = async () => {
     isProcessing.value = false
   }
 }
+
+const bitrate = computed(() => {
+  return Math.floor((form.quality / 100) * 8000) + 'k'
+})
 </script>

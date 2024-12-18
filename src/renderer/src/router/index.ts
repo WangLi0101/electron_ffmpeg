@@ -8,6 +8,10 @@ const routes = [
   {
     path: '/video',
     component: () => import('../views/transVideo/index.vue')
+  },
+  {
+    path: '/audio',
+    component: () => import('../views/transAudio/index.vue')
   }
 ]
 
