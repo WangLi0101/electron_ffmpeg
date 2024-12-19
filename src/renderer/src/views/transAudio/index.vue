@@ -159,6 +159,7 @@ const clearFile = () => {
 
 // 监听转换进度
 const handleConvertProgress = (_: IpcRendererEvent, data: ConvertProgress) => {
+  console.log('audio')
   if (data.type !== 'audio') {
     return
   }

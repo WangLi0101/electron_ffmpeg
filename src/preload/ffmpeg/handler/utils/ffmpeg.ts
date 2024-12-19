@@ -39,7 +39,6 @@ export const ffmpegHandler = (
 
     ffmpeg.stdout.on('data', (data) => {
       const output = data.toString()
-      console.log(output)
 
       // 从进度输出中提取当前时间
       const timeMatch = output.match(/time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})/)

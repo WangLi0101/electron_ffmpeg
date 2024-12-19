@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import type { UploadFile } from 'element-plus'
@@ -134,6 +134,11 @@ const convertImage = async () => {
     isConverting.value = false
   }
 }
+
+onBeforeUnmount(() => {
+  // 移除监听
+  window.ffmpeg.removeConvertProgress('convertProgress')
+})
 </script>
 
 <style lang="scss" scoped>

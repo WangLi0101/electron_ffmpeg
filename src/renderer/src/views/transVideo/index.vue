@@ -99,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile } from 'element-plus'
 import { IpcRendererEvent } from 'electron'
@@ -125,6 +125,8 @@ const formatQuality = (val: number) => {
 
 // 监听转换进度
 const handleConvertProgress = (_: IpcRendererEvent, data: ConvertProgress) => {
+  console.log('video')
+
   if (data.type !== 'video') {
     return
   }
@@ -135,7 +137,9 @@ const handleConvertProgress = (_: IpcRendererEvent, data: ConvertProgress) => {
   }
 }
 
-window.ffmpeg.convertProgress(handleConvertProgress)
+onMounted(() => {
+  window.ffmpeg.convertProgress(handleConvertProgress)
+})
 
 const handleTransform = async () => {
   if (!form.file) {
@@ -163,8 +167,8 @@ const handleTransform = async () => {
 const bitrate = computed(() => {
   return Math.floor((form.quality / 100) * 8000) + 'k'
 })
-onUnmounted(() => {
+onBeforeUnmount(() => {
   // 移除监听
-  window.ffmpeg.removeConvertProgress()
+  window.ffmpeg.removeConvertProgress('convertProgress')
 })
 </script>

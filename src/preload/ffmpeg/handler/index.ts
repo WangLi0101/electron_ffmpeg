@@ -5,7 +5,7 @@ import path, { join } from 'path'
 import { ffmpegHandler } from './utils/ffmpeg'
 
 export function setupIPC(): void {
-  // ping 渲染进程-主进程s
+  // ping 渲染进程-主进程
   ipcMain.on('ping', () => {
     console.log('pong')
   })

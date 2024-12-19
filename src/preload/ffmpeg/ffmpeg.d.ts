@@ -38,8 +38,8 @@ declare module 'ffmpeg' {
     convertImage: (options: ConvertImageOptions) => Promise<Result>
     videoTransform: (options: VideoTransformOptions) => Promise<Result>
     audioTransform: (options: AudioTransformOptions) => Promise<Result>
-    downloadFile: (options: DownloadFileOptions) => Promise<Result>
+    downloadFile: (options: DownloadFileOptions) => Promise
     convertProgress: (callback: (_: IpcRendererEvent, data: ConvertProgress) => void) => void
-    removeConvertProgress: () => void
+    removeConvertProgress: (type: string) => void
   }
 }
