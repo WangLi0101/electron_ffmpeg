@@ -24,15 +24,18 @@ declare module 'ffmpeg' {
   }
 
   interface ConvertProgress {
-    type: string
     progress: number
   }
 
   interface Result {
-    success: boolean
+    isSuccess: boolean
     outputPath: string
-    error?: string
+    message: string
   }
+
+  // @ts-ignore
+  type Callback = (_: IpcRendererEvent, ...args: any[]) => void
+  type Key = 'convertProgress'
 
   interface FfmpegApi {
     convertImage: (options: ConvertImageOptions) => Promise<Result>
@@ -40,6 +43,6 @@ declare module 'ffmpeg' {
     audioTransform: (options: AudioTransformOptions) => Promise<Result>
     downloadFile: (options: DownloadFileOptions) => Promise
     convertProgress: (callback: (_: IpcRendererEvent, data: ConvertProgress) => void) => void
-    removeConvertProgress: (type: string) => void
+    removeConvertProgress: (type: Key) => void
   }
 }

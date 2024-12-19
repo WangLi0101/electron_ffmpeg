@@ -1,4 +1,6 @@
-import './assets/index.css'
+import './style/index.css'
+import './style/font.css'
+import './style/theme.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import ElementPlus from 'element-plus'

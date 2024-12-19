@@ -1,14 +1,12 @@
 <template>
-  <div class="app">
-    <div class="nav">
-      <el-menu class="el-menu-demo" mode="horizontal" router default-active="/">
-        <el-menu-item index="/"> 图片转换 </el-menu-item>
-        <el-menu-item index="/video"> 视频转换 </el-menu-item>
-        <el-menu-item index="/audio"> 音频转换 </el-menu-item>
-      </el-menu>
-    </div>
-    <div class="content">
+  <div class="app w-full h-screen bg-[var(--bg)] p-[20px] flex flex-col">
+    <Header />
+    <div class="content bg-[var(--bg-primary)] rounded-[10px] p-[20px] flex-1 mt-5">
       <router-view />
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import Header from '@renderer/components/header/index.vue'
+</script>

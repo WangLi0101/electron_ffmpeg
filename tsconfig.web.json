@@ -6,8 +6,9 @@
     "src/renderer/src/**/*.vue",
     "src/preload/ffmpeg/*",
     "src/preload/*.d.ts",
-    "src/types/*"
-, "src/ipc/ipc.ts"  ],
+    "src/preload/*.d.ts",
+    "src/types/*",
+    ],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",

@@ -1,8 +1,6 @@
-import { ipcRenderer, IpcRendererEvent } from 'electron'
-import { FfmpegApi } from 'ffmpeg'
+import { ipcRenderer } from 'electron'
+import { Callback, FfmpegApi, Key } from 'ffmpeg'
 
-type Callback = (_: IpcRendererEvent, ...args: any[]) => void
-type Key = 'convertProgress'
 const map = new Map<Key, Callback>()
 
 export const ffmpegApi: FfmpegApi = {
