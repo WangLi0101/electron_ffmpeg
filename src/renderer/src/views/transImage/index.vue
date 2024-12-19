@@ -49,7 +49,6 @@
           :status="convertProgress >= 100 ? 'success' : ''"
           :stroke-width="8"
         />
-        <div class="text-sm text-gray-500 mt-2">{{ progressText }}</div>
       </div>
 
       <!-- 文件信息展示 -->
@@ -69,44 +68,39 @@
         >
           {{ isConverting ? '转换中...' : '开始转换' }}
         </el-button>
-
-        <el-button v-if="convertedFilePath" type="success" @click="downloadFile">
-          保存文件
-        </el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue'
+import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import type { UploadFile } from 'element-plus'
+import { IpcRendererEvent } from 'electron'
+import { ConvertProgress } from 'ffmpeg'
 
 const imageFile = ref<UploadFile | null>(null)
 const outputFormat = ref('')
 const supportedFormats = ['jpg', 'png', 'webp', 'gif']
 const isConverting = ref(false)
 const convertProgress = ref(0)
-const progressText = ref('')
 const convertedFilePath = ref('')
 
 const handleFileChange = (file: UploadFile) => {
   imageFile.value = file
   convertProgress.value = 0
-  progressText.value = ''
 }
 
-const handleConvertProgress = (_, data) => {
+const handleConvertProgress = (_: IpcRendererEvent, data: ConvertProgress) => {
   if (data.type !== 'image') {
     return
   }
-  const { progress, text } = data
+  const { progress } = data
   convertProgress.value = Math.round(progress)
-  progressText.value = text
 }
-window.electron.ipcRenderer.on('convertProgress', handleConvertProgress)
+window.ffmpeg.convertProgress(handleConvertProgress)
 
 const convertImage = async () => {
   if (!imageFile.value || !outputFormat.value) return
@@ -114,52 +108,32 @@ const convertImage = async () => {
   try {
     isConverting.value = true
     convertProgress.value = 0
-    progressText.value = '准备转换...'
+
     convertedFilePath.value = ''
 
-    const result = await window.electron.ipcRenderer.invoke('convertImage', {
-      sourcePath: imageFile.value.raw?.path,
-      format: outputFormat.value
+    const result = await window.ffmpeg.convertImage({
+      filePath: imageFile.value.raw!.path,
+      outputFormat: outputFormat.value
     })
 
     if (result.success) {
       convertProgress.value = 100
-      progressText.value = '转换完成'
+
       convertedFilePath.value = result.outputPath
       ElMessage.success('转换成功!')
     } else {
       convertProgress.value = 0
-      progressText.value = ''
+
       ElMessage.error(result.error || '转换失败')
     }
   } catch (error) {
     convertProgress.value = 0
-    progressText.value = ''
+
     ElMessage.error('转换过程出错')
   } finally {
     isConverting.value = false
   }
 }
-
-const downloadFile = async () => {
-  try {
-    const result = await window.electron.ipcRenderer.invoke('downloadFile', {
-      filePath: convertedFilePath.value
-    })
-
-    if (result.success) {
-      ElMessage.success('文件已保存!')
-    } else {
-      ElMessage.error(result.error || '保存失败')
-    }
-  } catch (error) {
-    ElMessage.error('保存过程出错')
-  }
-}
-
-onUnmounted(() => {
-  window.electron.ipcRenderer.removeListener('convertProgress', handleConvertProgress)
-})
 </script>
 
 <style lang="scss" scoped>

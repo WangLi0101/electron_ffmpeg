@@ -110,6 +110,8 @@
 import { ref, reactive, computed } from 'vue'
 import type { UploadFile } from 'element-plus'
 import { ElMessage } from 'element-plus'
+import { IpcRendererEvent } from 'electron'
+import { ConvertProgress } from 'ffmpeg'
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const selectedFile = ref<UploadFile | null>(null)
@@ -156,7 +158,7 @@ const clearFile = () => {
 }
 
 // 监听转换进度
-const handleConvertProgress = (_, data) => {
+const handleConvertProgress = (_: IpcRendererEvent, data: ConvertProgress) => {
   if (data.type !== 'audio') {
     return
   }
@@ -168,7 +170,7 @@ const handleConvertProgress = (_, data) => {
   }
 }
 
-window.electron.ipcRenderer.on('convertProgress', handleConvertProgress)
+window.ffmpeg.convertProgress(handleConvertProgress)
 
 const handleTransform = async () => {
   if (!selectedFile.value) {
@@ -180,8 +182,8 @@ const handleTransform = async () => {
     isProcessing.value = true
     progress.value = 0
 
-    const result = await window.electron.ipcRenderer.invoke('audioTransform', {
-      filePath: selectedFile.value.raw?.path,
+    const result = await window.ffmpeg.audioTransform({
+      filePath: selectedFile.value.raw!.path,
       outputFormat: form.outputFormat,
       audioCodec: form.audioCodec,
       quality: form.quality

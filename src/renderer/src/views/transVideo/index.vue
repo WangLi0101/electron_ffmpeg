@@ -99,10 +99,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile } from 'element-plus'
-import { ConvertProgress } from '#/types/index'
+import { IpcRendererEvent } from 'electron'
+import { ConvertProgress } from 'ffmpeg'
 const form = reactive({
   file: null as UploadFile | null,
   outputFormat: 'mp4',
@@ -123,7 +124,7 @@ const formatQuality = (val: number) => {
 }
 
 // 监听转换进度
-const handleConvertProgress = (_, data: ConvertProgress) => {
+const handleConvertProgress = (_: IpcRendererEvent, data: ConvertProgress) => {
   if (data.type !== 'video') {
     return
   }
@@ -133,7 +134,8 @@ const handleConvertProgress = (_, data: ConvertProgress) => {
     isProcessing.value = false
   }
 }
-window.electron.ipcRenderer.on('convertProgress', handleConvertProgress)
+
+window.ffmpeg.convertProgress(handleConvertProgress)
 
 const handleTransform = async () => {
   if (!form.file) {
@@ -145,8 +147,8 @@ const handleTransform = async () => {
     isProcessing.value = true
     progress.value = 0
 
-    await window.electron.ipcRenderer.invoke('videoTransform', {
-      filePath: form.file.raw?.path,
+    await window.ffmpeg.videoTransform({
+      filePath: form.file.raw!.path,
       outputFormat: form.outputFormat,
       videoCodec: form.videoCodec,
       audioCodec: form.audioCodec,
@@ -160,5 +162,9 @@ const handleTransform = async () => {
 
 const bitrate = computed(() => {
   return Math.floor((form.quality / 100) * 8000) + 'k'
+})
+onUnmounted(() => {
+  // 移除监听
+  window.ffmpeg.removeConvertProgress()
 })
 </script>

@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { setupIPC } from '../ipc/index'
+import { setupIPC } from '../preload/ffmpeg/handler/index'
 
 function createWindow(): void {
   // Create the browser window.
