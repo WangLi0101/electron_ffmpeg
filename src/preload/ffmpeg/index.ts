@@ -22,5 +22,6 @@ export const ffmpegApi: FfmpegApi = {
     const fn = map.get(type)
     if (!fn) return
     ipcRenderer.removeListener(type, fn)
+    map.delete(type)
   }
 }
