@@ -1,7 +1,9 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { FfmpegApi } from 'ffmpeg'
 
-const map = new Map()
+type Callback = (_: IpcRendererEvent, ...args: any[]) => void
+type Key = 'convertProgress'
+const map = new Map<Key, Callback>()
 
 export const ffmpegApi: FfmpegApi = {
   convertImage: (options) => ipcRenderer.invoke('convertImage', options),
@@ -18,7 +20,7 @@ export const ffmpegApi: FfmpegApi = {
     ipcRenderer.addListener('convertProgress', callback)
   },
   // 移除监听
-  removeConvertProgress: (type: string) => {
+  removeConvertProgress: (type: Key) => {
     const fn = map.get(type)
     if (!fn) return
     ipcRenderer.removeListener(type, fn)
