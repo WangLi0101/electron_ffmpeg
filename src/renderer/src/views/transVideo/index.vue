@@ -102,6 +102,7 @@
 import { ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile } from 'element-plus'
+import { ConvertProgress } from '#/types/index'
 const form = reactive({
   file: null as UploadFile | null,
   outputFormat: 'mp4',
@@ -122,7 +123,7 @@ const formatQuality = (val: number) => {
 }
 
 // 监听转换进度
-const handleConvertProgress = (_, data) => {
+const handleConvertProgress = (_, data: ConvertProgress) => {
   if (data.type !== 'video') {
     return
   }

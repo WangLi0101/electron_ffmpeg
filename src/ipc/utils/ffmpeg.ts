@@ -1,7 +1,7 @@
 import { join } from 'path'
 import { app } from 'electron'
 import { spawn } from 'child_process'
-import { TransformType } from '../index'
+import { TransformType } from '#/types/index'
 
 const isDev = !app.isPackaged
 const isMac = process.platform === 'darwin'
