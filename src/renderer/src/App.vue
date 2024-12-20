@@ -1,7 +1,7 @@
 <template>
-  <div class="app w-full h-screen bg-[var(--bg)] p-[20px] flex flex-col">
+  <div class="app w-full h-screen bg-[#f9f6f6] p-[10px] flex flex-col">
     <Header />
-    <div class="content bg-[var(--bg-primary)] rounded-[10px] p-[20px] flex-1 mt-5">
+    <div class="flex-1 mt-[10px] bg-[#fff] rounded-[10px] p-[10px] shadow-sm">
       <router-view />
     </div>
   </div>

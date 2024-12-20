@@ -1,0 +1,11 @@
+@use './font';
+@use './theme';
+@use './element';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'WorkSans';
+}

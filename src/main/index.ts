@@ -7,16 +7,23 @@ import { setupIPC } from '../preload/ffmpeg/handler/index'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 650,
+    height: 700,
+    // resizable: false, // 禁止调整窗口大小
+    // maximizable: false, // 禁止最大化
+
     show: false,
     autoHideMenuBar: true, // 自动隐藏菜单栏
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      webSecurity: true,
+      allowRunningInsecureContent: true,
+      contextIsolation: true
     }
   })
+
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
