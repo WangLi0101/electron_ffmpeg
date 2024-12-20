@@ -34,9 +34,13 @@
             status-icon
           >
             <el-row :gutter="10">
-              <el-col :span="8">
+              <el-col :span="24">
                 <el-form-item label="outputFormat" prop="outputFormat">
-                  <el-select v-model="ruleForm.outputFormat" placeholder="Please select">
+                  <el-select
+                    v-model="ruleForm.outputFormat"
+                    placeholder="Please select"
+                    style="width: 200px"
+                  >
                     <el-option
                       v-for="item in typeList"
                       :key="item.type"
@@ -46,7 +50,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="16">
+              <el-col :span="24">
                 <div class="flex items-center">
                   <el-form-item label="scale" prop="width">
                     <el-input-number
