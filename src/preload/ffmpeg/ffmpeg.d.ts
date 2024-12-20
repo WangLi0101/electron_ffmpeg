@@ -22,7 +22,8 @@ declare module 'ffmpeg' {
     filePath: string
     outputFormat: string
     audioCodec: string
-    quality: number
+    bitrate: number
+    sampleRate: string
   }
 
   interface ConvertProgress {

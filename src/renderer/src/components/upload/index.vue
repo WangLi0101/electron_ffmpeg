@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <el-upload
       class="upload-demo"
       drag
@@ -9,10 +9,10 @@
       :http-request="handleUpload"
       :show-file-list="false"
     >
-    <div class="flex items-center justify-center flex-col">
-      <div id="upload" style="width: 160px"></div>
-      <div class="el-upload__text text-base">Drop file here or <em>click to upload</em></div>
-    </div>
+      <div class="flex items-center justify-center flex-col">
+        <div id="upload" style="width: 160px"></div>
+        <div class="el-upload__text text-base">Drop file here or <em>click to upload</em></div>
+      </div>
     </el-upload>
   </div>
 </template>
@@ -30,10 +30,10 @@ interface Emits {
   (e: 'update:modelValue', value: File): void
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 const emit = defineEmits<Emits>()
-  let animation: any = null
-  onMounted(() => {
+let animation: any = null
+onMounted(() => {
   animation = lottie.loadAnimation({
     container: document.getElementById('upload')!, // 绑定dom节点
     renderer: 'svg', // 渲染方式:svg、canvas

@@ -1,8 +1,8 @@
-import { TransformType } from '#/types/index'
 import { ipcMain, dialog } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import { ffmpegHandler, getOutPutPath } from './utils/ffmpeg'
+import { AudioTransformOptions, ConvertImageOptions, VideoTransformOptions } from 'ffmpeg'
 
 export function setupIPC(): void {
   // ping 渲染进程-主进程
@@ -39,7 +39,7 @@ export function setupIPC(): void {
     }
   })
 
-  ipcMain.handle('convertImage', async (e, options) => {
+  ipcMain.handle('convertImage', async (e, options: ConvertImageOptions) => {
     return new Promise((resolve, reject) => {
       const { filePath, outputFormat, width, height } = options
       const outputPath = getOutPutPath(filePath, outputFormat)
@@ -56,12 +56,11 @@ export function setupIPC(): void {
   })
 
   // 视频转换相关
-  ipcMain.handle('videoTransform', async (e, options) => {
+  ipcMain.handle('videoTransform', async (e, options: VideoTransformOptions) => {
     return new Promise((resolve, reject) => {
       const { filePath, outputFormat, quality, videoCodec, audioCodec } = options
 
-      const outputPath =
-        filePath.replace(/\.[^/.]+$/, '') + `_converted_${new Date().getTime()}.${outputFormat}`
+      const outputPath = getOutPutPath(filePath, outputFormat)
 
       // 根据质量参数计算比特率
       const bitrate = Math.floor((quality / 100) * 8000) + 'k'
@@ -83,57 +82,68 @@ export function setupIPC(): void {
       ]
 
       try {
-        ffmpegHandler(e, outputPath, args, TransformType.VIDEO).then(
+        ffmpegHandler(e, args).then(
           (res) => {
-            resolve(res)
+            resolve({ ...res, outputPath })
           },
           (error) => {
-            reject({
-              code: 400,
-              error: error.message
-            })
+            reject(error)
           }
         )
       } catch (error) {
         console.error('转换失败:', error)
-        reject({
-          code: 400,
-          error: '转换失败，请确保已安装 ffmpeg'
-        })
+        reject({ isSuccess: false, message: error })
       }
     })
   })
 
   // 音频转换
-  ipcMain.handle('audioTransform', async (e, options) => {
+  ipcMain.handle('audioTransform', async (e, options: AudioTransformOptions) => {
     return new Promise((resolve, reject) => {
-      const { filePath, outputFormat, audioCodec: _audioCodec, quality } = options
+      const {
+        filePath,
+        outputFormat,
+        audioCodec: _audioCodec,
+        bitrate: _bitrate,
+        sampleRate
+      } = options
 
-      const outputPath =
-        filePath.replace(/\.[^/.]+$/, '') + `_converted_${new Date().getTime()}.${outputFormat}`
+      const outputPath = getOutPutPath(filePath, outputFormat)
 
       // 根据质量参数计算比特率
-      const bitrate = Math.floor((quality / 100) * 320) + 'k'
+      const bitrate = Math.floor((_bitrate / 100) * 320) + 'k'
 
-      const args = ['-i', filePath, '-b:a', bitrate, '-progress', 'pipe:1', outputPath]
+      const args = [
+        '-i',
+        filePath,
+        '-b:a',
+        bitrate,
+        '-ar',
+        sampleRate,
+        '-progress',
+        'pipe:1',
+        outputPath
+      ]
 
       try {
-        ffmpegHandler(e, outputPath, args, TransformType.AUDIO).then(
+        ffmpegHandler(e, args).then(
           (res) => {
-            resolve(res)
+            resolve({ ...res, outputPath })
           },
           (error) => {
             reject({
-              code: 400,
-              error: error.message
+              isSuccess: false,
+              message: error.message,
+              outputPath: ''
             })
           }
         )
       } catch (error) {
         console.error('转换失败:', error)
         reject({
-          code: 400,
-          error: '转换失败，请确保已安装 ffmpeg'
+          isSuccess: false,
+          message: error,
+          outputPath: ''
         })
       }
     })

@@ -1,149 +1,144 @@
 <template>
-  <div class="max-w-3xl mx-auto p-8">
-    <h1 class="text-2xl text-primary font-semibold text-center mb-8">视频转换</h1>
-
-    <el-form :model="form" label-width="120px" class="bg-white p-6 rounded-lg shadow-md">
-      <el-form-item label="选择视频文件">
-        <el-upload
-          class="w-full"
-          :auto-upload="false"
-          :show-file-list="true"
-          :on-change="handleFileChange"
-          accept="video/*"
-        >
-          <el-button
-            type="primary"
-            class="w-full h-32 border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/10 transition-all flex flex-col items-center justify-center group"
+  <div class="trans-video">
+    <h2 class="title">
+      <IconifyIcon icon="material-symbols:video-camera-back" />
+      <p class="ml-[10px]">Video Conversion</p>
+    </h2>
+    <div class="content">
+      <div class="upload">
+        <Upload v-model="file" accept="video/*" />
+      </div>
+      <Transition name="fade">
+        <div v-if="file" class="my_file">
+          <div class="left flex items-center">
+            <IconifyIcon icon="material-symbols:video-camera-back" />
+            <p class="ml-[10px]">{{ file.name }}</p>
+          </div>
+          <div class="right">
+            <IconifyIcon icon="material-symbols:close" class="cursor-pointer" @click="delFile" />
+          </div>
+        </div>
+      </Transition>
+      <Transition name="fade">
+        <div v-if="file" class="my_content">
+          <h3 class="title !mb-[15px] font-bold">
+            <IconifyIcon icon="material-symbols:settings" class="text-[16px]" />
+            <span class="ml-[10px] text-[16px]">Setting</span>
+          </h3>
+          <el-form
+            ref="ruleFormRef"
+            :model="form"
+            :rules="rules"
+            label-width="auto"
+            class="demo-ruleForm"
+            status-icon
           >
-            <span>选择视频</span>
-          </el-button>
-        </el-upload>
-      </el-form-item>
-
-      <el-form-item label="输出格式">
-        <el-select v-model="form.outputFormat" class="w-full">
-          <el-option-group label="常用视频格式">
-            <el-option label="MP4" value="mp4" />
-            <el-option label="MKV" value="mkv" />
-            <el-option label="AVI" value="avi" />
-            <el-option label="MOV" value="mov" />
-            <el-option label="WMV" value="wmv" />
-            <el-option label="FLV" value="flv" />
-            <el-option label="WebM" value="webm" />
-          </el-option-group>
-          <el-option-group label="专业视频格式">
-            <el-option label="MXF" value="mxf" />
-            <el-option label="M2TS" value="m2ts" />
-            <el-option label="TS" value="ts" />
-            <el-option label="VOB" value="vob" />
-          </el-option-group>
-          <el-option-group label="压缩视频格式">
-            <el-option label="M4V" value="m4v" />
-            <el-option label="3GP" value="3gp" />
-            <el-option label="OGV" value="ogv" />
-          </el-option-group>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="视频编码">
-        <el-select v-model="form.videoCodec" class="w-full">
-          <el-option-group label="通用编码">
-            <el-option label="H.264 (AVC)" value="h264" />
-            <el-option label="H.265 (HEVC)" value="hevc" />
-            <el-option label="VP9" value="vp9" />
-            <el-option label="AV1" value="av1" />
-          </el-option-group>
-          <el-option-group label="专业编码">
-            <el-option label="ProRes" value="prores" />
-            <el-option label="DNxHD" value="dnxhd" />
-          </el-option-group>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="音频编码">
-        <el-select v-model="form.audioCodec" class="w-full">
-          <el-option label="AAC" value="aac" />
-          <el-option label="MP3" value="mp3" />
-          <el-option label="AC3" value="ac3" />
-          <el-option label="FLAC" value="flac" />
-          <el-option label="Opus" value="opus" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="压缩质量">
-        <div class="flex items-center space-x-2 w-full">
-          <el-slider
-            v-model="form.quality"
-            :min="1"
-            :max="100"
-            :format-tooltip="formatQuality"
-            class="flex-1"
-          />
-          <span class="text-gray-500 w-16 text-right">{{ bitrate }}</span>
+            <el-row :gutter="10">
+              <el-col :span="12">
+                <el-form-item label="Output Format" prop="outputFormat">
+                  <el-select v-model="form.outputFormat" placeholder="Please select">
+                    <el-option-group label="Common Video Formats">
+                      <el-option label="MP4" value="mp4" />
+                      <el-option label="MKV" value="mkv" />
+                      <el-option label="AVI" value="avi" />
+                      <el-option label="MOV" value="mov" />
+                    </el-option-group>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="Video Codec" prop="videoCodec">
+                  <el-select v-model="form.videoCodec" placeholder="Please select">
+                    <el-option label="H.264 (AVC)" value="h264" />
+                    <el-option label="H.265 (HEVC)" value="hevc" />
+                    <el-option label="VP9" value="vp9" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="10">
+              <el-col :span="12">
+                <el-form-item label="Audio Codec" prop="audioCodec">
+                  <el-select v-model="form.audioCodec" placeholder="Please select">
+                    <el-option label="AAC" value="aac" />
+                    <el-option label="MP3" value="mp3" />
+                    <el-option label="AC3" value="ac3" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="Quality" prop="quality">
+                  <el-slider
+                    v-model="form.quality"
+                    :min="1"
+                    :max="100"
+                    :format-tooltip="formatQuality"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+          <div class="progress mt-[20px]">
+            <el-progress :percentage="progress" />
+          </div>
+          <div class="flex justify-center mt-[20px]">
+            <el-button type="primary" @click="handleTransform" :loading="isProcessing">
+              Convert
+            </el-button>
+          </div>
         </div>
-      </el-form-item>
-      <el-form-item>
-        <div v-if="progress > 0" class="mt-6 p-4 bg-white rounded-lg shadow-md">
-          <el-progress :percentage="progress" />
+      </Transition>
+      <Transition name="fade">
+        <div v-if="viewUrl" class="my_content">
+          <h3 class="title !mb-[15px] font-bold">
+            <IconifyIcon icon="material-symbols:visibility" class="text-[16px]" />
+            <span class="ml-[10px] text-[16px]">View</span>
+          </h3>
+          <video :src="`file://${viewUrl}`" alt="" class="w-full h-auto" controls />
         </div>
-      </el-form-item>
-      <el-form-item class="mb-0 text-center">
-        <div class="flex justify-center w-full">
-          <el-button type="primary" :loading="isProcessing" @click="handleTransform">
-            开始转换
-          </el-button>
-        </div>
-      </el-form-item>
-    </el-form>
+      </Transition>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
-import { ElMessage } from 'element-plus'
-import type { UploadFile } from 'element-plus'
+import Upload from '@renderer/components/upload/index.vue'
+import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import { Icon as IconifyIcon } from '@iconify/vue'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { IpcRendererEvent } from 'electron'
-import { ConvertProgress } from 'ffmpeg'
+
+const file = ref<File>()
+const isProcessing = ref(false)
+const progress = ref(0)
+const ruleFormRef = ref<FormInstance>()
+
 const form = reactive({
-  file: null as UploadFile | null,
   outputFormat: 'mp4',
   videoCodec: 'h264',
   audioCodec: 'aac',
   quality: 80
 })
 
-const isProcessing = ref(false)
-const progress = ref(0)
+const rules = reactive<FormRules>({
+  outputFormat: [{ required: true, message: 'Please select output format', trigger: 'change' }],
+  videoCodec: [{ required: true, message: 'Please select video codec', trigger: 'change' }],
+  audioCodec: [{ required: true, message: 'Please select audio codec', trigger: 'change' }]
+})
 
-const handleFileChange = (file: UploadFile) => {
-  form.file = file
+const delFile = () => {
+  file.value = undefined
+  progress.value = 0
 }
 
 const formatQuality = (val: number) => {
-  return `${val}%`
+  return Math.floor((val / 100) * 8000) + 'k'
 }
 
-// 监听转换进度
-const handleConvertProgress = (_: IpcRendererEvent, data: ConvertProgress) => {
-  console.log('video')
-
-  if (data.type !== 'video') {
-    return
-  }
-  const { progress: value } = data
-  progress.value = value
-  if (value >= 100) {
-    isProcessing.value = false
-  }
-}
-
-onMounted(() => {
-  window.ffmpeg.convertProgress(handleConvertProgress)
-})
-
+const viewUrl = ref('')
 const handleTransform = async () => {
-  if (!form.file) {
-    ElMessage.warning('请先选择视频文件')
+  if (!file.value) {
+    ElMessage.warning('Please select a video file')
     return
   }
 
@@ -151,24 +146,36 @@ const handleTransform = async () => {
     isProcessing.value = true
     progress.value = 0
 
-    await window.ffmpeg.videoTransform({
-      filePath: form.file.raw!.path,
+    const res = await window.ffmpeg.videoTransform({
+      filePath: file.value.path,
       outputFormat: form.outputFormat,
       videoCodec: form.videoCodec,
       audioCodec: form.audioCodec,
       quality: form.quality
     })
+    ElMessage.success('Conversion successful')
+    viewUrl.value = res.outputPath
+    isProcessing.value = false
   } catch (error) {
-    ElMessage.error('视频转换失败')
+    ElMessage.error('Video conversion failed')
     isProcessing.value = false
   }
 }
 
-const bitrate = computed(() => {
-  return Math.floor((form.quality / 100) * 8000) + 'k'
+watch(file, (newVal) => {
+  if (newVal) {
+    viewUrl.value = ''
+    progress.value = 0
+  }
 })
+
+onMounted(() => {
+  window.ffmpeg.convertProgress((_: IpcRendererEvent, data) => {
+    progress.value = data.progress
+  })
+})
+
 onBeforeUnmount(() => {
-  // 移除监听
   window.ffmpeg.removeConvertProgress('convertProgress')
 })
 </script>

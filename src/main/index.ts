@@ -9,9 +9,9 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 650,
     height: 700,
-    // resizable: false, // 禁止调整窗口大小
-    // maximizable: false, // 禁止最大化
-
+    resizable: false, // 禁止调整窗口大小
+    maximizable: false, // 禁止最大化
+    title: 'Media Converter',
     show: false,
     autoHideMenuBar: true, // 自动隐藏菜单栏
     ...(process.platform === 'linux' ? { icon } : {}),
