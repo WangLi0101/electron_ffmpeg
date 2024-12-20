@@ -10,6 +10,8 @@ declare module 'ffmpeg' {
   interface ConvertImageOptions {
     filePath: string
     outputFormat: string
+    width: number
+    height: number
   }
 
   interface DownloadFileOptions {

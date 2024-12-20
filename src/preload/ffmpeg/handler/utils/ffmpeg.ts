@@ -1,7 +1,6 @@
 import { join } from 'path'
 import { app } from 'electron'
 import { spawn } from 'child_process'
-import { TransformType } from '#/types/index'
 
 const isDev = !app.isPackaged
 const isMac = process.platform === 'darwin'
@@ -14,11 +13,9 @@ const ffmpegPath = isMac
 // 运行ffmpeg
 export const ffmpegHandler = (
   e: Electron.IpcMainInvokeEvent,
-  outputPath: string,
-  args: string[],
-  type: TransformType
-) => {
-  return new Promise((resolve) => {
+  args: string[]
+): Promise<{ isSuccess: boolean; message: string }> => {
+  return new Promise((resolve, reject) => {
     const ffmpeg = spawn(ffmpegPath, args)
     let duration = 0
     let currentTime = 0
@@ -39,7 +36,6 @@ export const ffmpegHandler = (
 
     ffmpeg.stdout.on('data', (data) => {
       const output = data.toString()
-
       // 从进度输出中提取当前时间
       const timeMatch = output.match(/time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})/)
       if (timeMatch) {
@@ -53,8 +49,7 @@ export const ffmpegHandler = (
         if (duration > 0) {
           const progress = (currentTime / duration) * 100
           e.sender.send('convertProgress', {
-            progress: Number(progress.toFixed(1)),
-            type
+            progress: Number(progress.toFixed(1))
           })
         }
       }
@@ -62,18 +57,14 @@ export const ffmpegHandler = (
 
     ffmpeg.on('close', (code) => {
       if (code === 0) {
-        e.sender.send('convertProgress', {
-          progress: 100,
-          type
-        })
-        resolve({ code: 0, outputPath })
+        resolve({ isSuccess: true, message: '转换成功' })
       } else {
-        resolve({ code: 200, error: '转换失败' })
+        reject({ isSuccess: false, message: '转换失败' })
       }
     })
 
     ffmpeg.on('error', (err) => {
-      resolve({ code: 400, error: err.message })
+      reject({ isSuccess: false, message: err })
     })
   })
 }

@@ -39,36 +39,21 @@ export function setupIPC(): void {
     }
   })
 
-  ipcMain.handle('convertImage', async (e, args) => {
+  ipcMain.handle('convertImage', async (e, options) => {
     return new Promise((resolve, reject) => {
-      const { sourcePath, format } = args
-      try {
-        const fileName = `converted_${Date.now()}.${format}`
-        const outputPath = join(app.getPath('downloads'), fileName)
-        const args = [
-          '-i',
-          sourcePath,
-          '-progress',
-          'pipe:1', // 输出进度信息到 stdout
-          outputPath
-        ]
-        ffmpegHandler(e, outputPath, args, TransformType.IMAGE).then(
-          (res) => {
-            resolve(res)
-          },
-          (error) => {
-            reject({
-              code: 400,
-              error: error.message
-            })
-          }
-        )
-      } catch (error) {
-        reject({
-          code: 400,
-          error: '转换失败，请确保已安装 ffmpeg'
-        })
-      }
+      const { filePath, outputFormat, width, height } = options
+      const outputPath =
+        filePath.replace(/\.[^/.]+$/, '') + `_converted_${new Date().getTime()}.${outputFormat}`
+      const args = ['-i', filePath, '-vf', `scale=${width}:${height}`, '-c:a', 'copy', outputPath]
+
+      ffmpegHandler(e, args).then(
+        (res) => {
+          resolve({ ...res, outputPath })
+        },
+        (error) => {
+          reject({ ...error, outputPath: '' })
+        }
+      )
     })
   })
 

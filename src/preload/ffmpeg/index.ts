@@ -14,6 +14,8 @@ export const ffmpegApi: FfmpegApi = {
 
   // 主进程到渲染进程
   convertProgress: (callback) => {
+    console.log('convertProgress')
+
     map.set('convertProgress', callback)
     ipcRenderer.addListener('convertProgress', callback)
   },
