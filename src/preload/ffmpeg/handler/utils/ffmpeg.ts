@@ -1,4 +1,4 @@
-import { join } from 'path'
+import path, { join } from 'path'
 import { app } from 'electron'
 import { spawn } from 'child_process'
 
@@ -8,7 +8,7 @@ const ffmpegPath = isMac
   ? 'ffmpeg'
   : isDev
     ? join(__dirname, '../../resources/ffmpeg/bin/ffmpeg.exe') // 开发环境路径
-    : join(process.resourcesPath, 'app.asar.unpacked/resources/ffmpeg/bin/ffmpeg.exe') // 生产环境路径
+    : join(process.resourcesPath, 'app.asar.unpacked/resources/ffmpeg/bin/ffmpeg.exe') // 生产环境路
 
 // 运行ffmpeg
 export const ffmpegHandler = (
@@ -67,4 +67,14 @@ export const ffmpegHandler = (
       reject({ isSuccess: false, message: err })
     })
   })
+}
+
+export const getOutPutPath = (filePath: string, outputFormat: string) => {
+  const fileName = path.basename(filePath)
+  const basePath = path.dirname(filePath)
+  const outputPath = path.join(
+    basePath,
+    `${fileName}_converted_${new Date().getTime()}.${outputFormat}`
+  )
+  return outputPath
 }

@@ -1,8 +1,8 @@
 import { TransformType } from '#/types/index'
-import { ipcMain, app, dialog } from 'electron'
+import { ipcMain, dialog } from 'electron'
 import fs from 'fs'
-import path, { join } from 'path'
-import { ffmpegHandler } from './utils/ffmpeg'
+import path from 'path'
+import { ffmpegHandler, getOutPutPath } from './utils/ffmpeg'
 
 export function setupIPC(): void {
   // ping 渲染进程-主进程
@@ -42,10 +42,8 @@ export function setupIPC(): void {
   ipcMain.handle('convertImage', async (e, options) => {
     return new Promise((resolve, reject) => {
       const { filePath, outputFormat, width, height } = options
-      const outputPath =
-        filePath.replace(/\.[^/.]+$/, '') + `_converted_${new Date().getTime()}.${outputFormat}`
+      const outputPath = getOutPutPath(filePath, outputFormat)
       const args = ['-i', filePath, '-vf', `scale=${width}:${height}`, '-c:a', 'copy', outputPath]
-
       ffmpegHandler(e, args).then(
         (res) => {
           resolve({ ...res, outputPath })
