@@ -31,6 +31,10 @@
 
 - [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
 
+### 注意
+
+需要将ffmpeg的安装包放入resources目录下，ffmpeg下载路径 <https://www.ffmpeg.org/download.html>
+
 ### 安装依赖
 
 ```bash
