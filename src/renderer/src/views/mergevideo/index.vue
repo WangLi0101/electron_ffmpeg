@@ -15,11 +15,10 @@
       />
       <IconifyIcon
         icon="material-symbols:folder-open"
-        class="mr-[4px] mt-[3px]"
+        class="mr-[4px]"
         color="var(--el-color-primary)"
       />
       <span class="mr-[4px]">input folder:</span>
-      <p class="mr-[4px]">{{ outputFolder }}</p>
       <el-button type="primary" @click="selectInputFolder" link
         >{{ outputFolder ? 'change' : 'select' }}folder</el-button
       >
@@ -27,7 +26,7 @@
     <div class="mt-4 flex items-center">
       <IconifyIcon
         icon="material-symbols:folder-open"
-        class="mr-[4px] mt-[3px]"
+        class="mr-[4px]"
         color="var(--el-color-primary)"
       />
       <span class="mr-[4px]">output folder:</span>
