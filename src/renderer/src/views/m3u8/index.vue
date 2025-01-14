@@ -22,7 +22,7 @@ http://b.m3u8----fileb"
       />
       <p class="mr-[4px]">{{ outputFolder }}</p>
       <el-button type="primary" @click="selectFolder" link
-        >{{ outputFolder ? '更改' : '选择' }}文件夹</el-button
+        >{{ outputFolder ? 'change' : 'select' }}folder</el-button
       >
     </div>
 
