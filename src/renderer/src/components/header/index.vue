@@ -5,21 +5,27 @@
         <IconifyIcon icon="material-symbols:image" class="text-[16px]" />
         <span class="ml-[10px] text-[16px]">Image</span>
       </el-menu-item>
-      <el-menu-item index="/video">
-        <IconifyIcon icon="material-symbols:video-camera-back" />
-        <span class="ml-[10px] text-[16px]">Video</span>
-      </el-menu-item>
+      <el-sub-menu>
+        <template #title>
+          <IconifyIcon icon="material-symbols:video-camera-back" />
+          <span class="ml-[10px] text-[16px]">Video</span>
+        </template>
+        <el-menu-item index="/video">
+          <IconifyIcon icon="material-symbols:video-camera-back" />
+          <span class="ml-[10px] text-[16px]">Video</span>
+        </el-menu-item>
+        <el-menu-item index="/m3u8">
+          <IconifyIcon icon="material-symbols:video-camera-back" />
+          <span class="ml-[10px] text-[16px]">M3U8</span>
+        </el-menu-item>
+        <el-menu-item index="/mergevideo">
+          <IconifyIcon icon="material-symbols:video-camera-back" />
+          <span class="ml-[10px] text-[16px]">Merge Video</span>
+        </el-menu-item>
+      </el-sub-menu>
       <el-menu-item index="/audio">
         <IconifyIcon icon="material-symbols:audio-file" />
         <span class="ml-[10px] text-[16px]">Audio</span>
-      </el-menu-item>
-      <el-menu-item index="/m3u8">
-        <IconifyIcon icon="material-symbols:video-camera-back" />
-        <span class="ml-[10px] text-[16px]">M3U8</span>
-      </el-menu-item>
-      <el-menu-item index="/mergevideo">
-        <IconifyIcon icon="material-symbols:video-camera-back" />
-        <span class="ml-[10px] text-[16px]">Merge Video</span>
       </el-menu-item>
     </el-menu>
   </div>
