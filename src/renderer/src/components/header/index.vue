@@ -17,6 +17,10 @@
         <IconifyIcon icon="material-symbols:video-camera-back" />
         <span class="ml-[10px] text-[16px]">M3U8</span>
       </el-menu-item>
+      <el-menu-item index="/mergevideo">
+        <IconifyIcon icon="material-symbols:video-camera-back" />
+        <span class="ml-[10px] text-[16px]">Merge Video</span>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>

@@ -6,6 +6,7 @@ import {
   AudioTransformOptions,
   ConvertImageOptions,
   M3u8Options,
+  MergeVideoOptions,
   VideoTransformOptions
 } from 'ffmpeg'
 
@@ -181,6 +182,46 @@ export function setupIPC(): void {
           outputPath: ''
         })
       }
+    })
+  })
+
+  // 合并视频
+  ipcMain.handle('mergeVideo', async (e, options: MergeVideoOptions) => {
+    return new Promise((resolve, reject) => {
+      const { files, outputPath: output } = options
+      const outputPath = path.join(output, `merge_${Date.now()}.mp4`)
+
+      // 动态生成输入参数
+      const inputArgs = files.map((file) => `-i "${file}"`).join(' ')
+
+      // 动态生成 filter_complex 参数
+      const filterInputs = files.map((_, i) => `[${i}:v][${i}:a]`).join('')
+      const filterComplex = `${filterInputs}concat=n=${files.length}:v=1:a=1[outv][outa]`
+
+      const args = [
+        ...inputArgs.split(' '), // 将输入参数拆分为数组
+        '-filter_complex',
+        filterComplex,
+        '-map',
+        '[outv]',
+        '-map',
+        '[outa]',
+        '-c:a',
+        'aac',
+        '-strict',
+        '-2',
+        outputPath
+      ]
+      console.log(args)
+
+      ffmpegHandler(e, args).then(
+        (res) => {
+          resolve({ ...res, outputPath })
+        },
+        (error) => {
+          reject(error)
+        }
+      )
     })
   })
 

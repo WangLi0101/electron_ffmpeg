@@ -16,6 +16,8 @@ export const ffmpegApi: FfmpegApi = {
 
   selectFolder: () => ipcRenderer.invoke('selectFolder'),
 
+  mergeVideo: (options) => ipcRenderer.invoke('mergeVideo', options),
+
   // 主进程到渲染进程
   convertProgress: (callback) => {
     map.set('convertProgress', callback)

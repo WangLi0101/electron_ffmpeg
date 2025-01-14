@@ -16,6 +16,10 @@ const routes = [
   {
     path: '/m3u8',
     component: () => import('../views/m3u8/index.vue')
+  },
+  {
+    path: '/mergevideo',
+    component: () => import('../views/mergevideo/index.vue')
   }
 ]
 

@@ -42,6 +42,10 @@ declare module 'ffmpeg' {
     outputPath: string
   }
 
+  interface MergeVideoOptions {
+    files: string[]
+    outputPath: string
+  }
   // @ts-ignore
   type Callback = (_: IpcRendererEvent, ...args: any[]) => void
   type Key = 'convertProgress'
@@ -55,5 +59,6 @@ declare module 'ffmpeg' {
     removeConvertProgress: (type: Key) => void
     m3u8: (options: M3u8Options) => Promise<Result>
     selectFolder: () => Promise<string>
+    mergeVideo: (options: MergeVideoOptions) => Promise<Result>
   }
 }
