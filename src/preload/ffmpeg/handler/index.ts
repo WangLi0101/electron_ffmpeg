@@ -191,34 +191,28 @@ export function setupIPC(): void {
       const { files, outputPath: output } = options
       const outputPath = path.join(output, `merge_${Date.now()}.mp4`)
 
-      // 动态生成输入参数
-      const inputArgs = files.map((file) => `-i "${file}"`).join(' ')
+      // 创建一个临时的文本文件来存储视频文件列表
+      const tempFilePath = path.join(output, 'temp_files_list.txt')
 
-      // 动态生成 filter_complex 参数
-      const filterInputs = files.map((_, i) => `[${i}:v][${i}:a]`).join('')
-      const filterComplex = `${filterInputs}concat=n=${files.length}:v=1:a=1[outv][outa]`
+      // 创建文件列表内容
+      const fileList = files.map((file) => `file '${file}'`).join('\n')
 
-      const args = [
-        ...inputArgs.split(' '), // 将输入参数拆分为数组
-        '-filter_complex',
-        filterComplex,
-        '-map',
-        '[outv]',
-        '-map',
-        '[outa]',
-        '-c:a',
-        'aac',
-        '-strict',
-        '-2',
-        outputPath
-      ]
-      console.log(args)
+      // 写入临时文件
+      fs.writeFileSync(tempFilePath, fileList)
+
+      const args = ['-f', 'concat', '-safe', '0', '-i', tempFilePath, '-c', 'copy', outputPath]
 
       ffmpegHandler(e, args).then(
         (res) => {
+          // 删除临时文件
+          fs.unlinkSync(tempFilePath)
           resolve({ ...res, outputPath })
         },
         (error) => {
+          // 发生错误时也要删除临时文件
+          if (fs.existsSync(tempFilePath)) {
+            fs.unlinkSync(tempFilePath)
+          }
           reject(error)
         }
       )
