@@ -1,8 +1,13 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain, dialog, app } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import { ffmpegHandler, getOutPutPath } from './utils/ffmpeg'
-import { AudioTransformOptions, ConvertImageOptions, VideoTransformOptions } from 'ffmpeg'
+import {
+  AudioTransformOptions,
+  ConvertImageOptions,
+  M3u8Options,
+  VideoTransformOptions
+} from 'ffmpeg'
 
 export function setupIPC(): void {
   // ping 渲染进程-主进程
@@ -146,6 +151,49 @@ export function setupIPC(): void {
           outputPath: ''
         })
       }
+    })
+  })
+
+  // m3u8下载
+  ipcMain.handle('m3u8', async (e, options: M3u8Options) => {
+    return new Promise((resolve, reject) => {
+      const { url, name, outputPath: output } = options
+      const outputPath = path.join(output, `${name}.mp4`)
+      const args = ['-i', url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc', outputPath]
+      try {
+        ffmpegHandler(e, args).then(
+          (res) => {
+            resolve({ ...res, outputPath })
+          },
+          (error) => {
+            reject({
+              isSuccess: false,
+              message: error.message,
+              outputPath: ''
+            })
+          }
+        )
+      } catch (error) {
+        console.error('下载失败:', error)
+        reject({
+          isSuccess: false,
+          message: error,
+          outputPath: ''
+        })
+      }
+    })
+  })
+
+  // 选择文件夹
+  ipcMain.handle('selectFolder', async () => {
+    return new Promise((resolve) => {
+      dialog
+        .showOpenDialog({
+          properties: ['openDirectory']
+        })
+        .then((result) => {
+          resolve(result.filePaths[0])
+        })
     })
   })
 }

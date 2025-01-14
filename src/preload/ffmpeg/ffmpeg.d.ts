@@ -36,6 +36,12 @@ declare module 'ffmpeg' {
     message: string
   }
 
+  interface M3u8Options {
+    url: string
+    name: string
+    outputPath: string
+  }
+
   // @ts-ignore
   type Callback = (_: IpcRendererEvent, ...args: any[]) => void
   type Key = 'convertProgress'
@@ -47,5 +53,7 @@ declare module 'ffmpeg' {
     downloadFile: (options: DownloadFileOptions) => Promise
     convertProgress: (callback: (_: IpcRendererEvent, data: ConvertProgress) => void) => void
     removeConvertProgress: (type: Key) => void
+    m3u8: (options: M3u8Options) => Promise<Result>
+    selectFolder: () => Promise<string>
   }
 }

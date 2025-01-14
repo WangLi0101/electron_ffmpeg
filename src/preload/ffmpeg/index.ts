@@ -12,6 +12,10 @@ export const ffmpegApi: FfmpegApi = {
 
   downloadFile: (options) => ipcRenderer.invoke('downloadFile', options),
 
+  m3u8: (options) => ipcRenderer.invoke('m3u8', options),
+
+  selectFolder: () => ipcRenderer.invoke('selectFolder'),
+
   // 主进程到渲染进程
   convertProgress: (callback) => {
     map.set('convertProgress', callback)

@@ -12,6 +12,10 @@ const routes = [
   {
     path: '/audio',
     component: () => import('../views/transAudio/index.vue')
+  },
+  {
+    path: '/m3u8',
+    component: () => import('../views/m3u8/index.vue')
   }
 ]
 

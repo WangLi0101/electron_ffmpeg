@@ -13,6 +13,10 @@
         <IconifyIcon icon="material-symbols:audio-file" />
         <span class="ml-[10px] text-[16px]">Audio</span>
       </el-menu-item>
+      <el-menu-item index="/m3u8">
+        <IconifyIcon icon="material-symbols:video-camera-back" />
+        <span class="ml-[10px] text-[16px]">M3U8</span>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
