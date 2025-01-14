@@ -8,17 +8,19 @@
       v-model="text"
       type="textarea"
       :rows="10"
-      placeholder="http://1500009070.vod2.myqcloud.com/6c9c6118vodcq1500009070/efe8d3dc1397757898032629953/playlist_eof.m3u8----黄先泰_18123537243_手机_1
-http://1500009070.vod2.myqcloud.com/6c9c6118vodcq1500009070/44058d1b1397757898033947426/playlist_eof.m3u8----黄先泰_18123537243_屏幕_1"
+      placeholder="---区分文件名和url,换行区分多个文件
+例如：
+http://a.m3u8----filea
+http://b.m3u8----fileb"
     />
 
     <div class="mt-4 flex itemc">
       <IconifyIcon
         icon="material-symbols:folder-open"
-        class="mr-2 mt-1"
+        class="mr-[4px] mt-[3px]"
         color="var(--el-color-primary)"
       />
-      <p class="mr-4">{{ outputFolder }}</p>
+      <p class="mr-[4px]">{{ outputFolder }}</p>
       <el-button type="primary" @click="selectFolder" link
         >{{ outputFolder ? '更改' : '选择' }}文件夹</el-button
       >
@@ -30,14 +32,26 @@ http://1500009070.vod2.myqcloud.com/6c9c6118vodcq1500009070/44058d1b139775789803
       <el-table-column prop="url" label="URL" show-overflow-tooltip />
       <el-table-column prop="status" label="status" width="140" align="center">
         <template #default="scope">
-          <el-tag :type="getStatus(scope.row.status)">{{ scope.row.status }}</el-tag>
+          <el-tag :type="getStatus(scope.row.status)">
+            <div class="flex items-center">
+              <IconifyIcon
+                v-if="scope.row.status === 'downloading'"
+                icon="line-md:loading-loop"
+                class="mr-[4px] mt-[3px]"
+                color="var(--el-color-primary)"
+              />
+              {{ scope.row.status }}
+            </div>
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="outputPath" label="operator" width="100">
+      <el-table-column prop="outputPath" label="operator" width="100" align="center">
         <template #default="scope">
           <div v-if="scope.row.outputPath">
             <el-tooltip :content="scope.row.outputPath" placement="top">
-              <el-button @click="handlePlay(scope.row.outputPath)" type="primary">play</el-button>
+              <el-button @click="handlePlay(scope.row.outputPath)" type="primary" link
+                >play</el-button
+              >
             </el-tooltip>
           </div>
         </template>
