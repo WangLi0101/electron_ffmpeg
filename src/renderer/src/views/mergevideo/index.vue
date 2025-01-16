@@ -19,9 +19,7 @@
         color="var(--el-color-primary)"
       />
       <span class="mr-[4px]">input folder:</span>
-      <el-button type="primary" @click="selectInputFolder" link
-        >{{ outputFolder ? 'change' : 'select' }}folder</el-button
-      >
+      <el-button type="primary" @click="selectInputFolder" link> selectfolder</el-button>
     </div>
     <div class="mt-4 flex items-center">
       <IconifyIcon
@@ -35,7 +33,6 @@
         >{{ outputFolder ? 'change' : 'select' }}folder</el-button
       >
     </div>
-
     <el-table :data="tableData" style="width: 100%" border class="mt-4">
       <el-table-column label="#" type="index" width="50" align="center" />
       <el-table-column prop="name" label="name" show-overflow-tooltip />

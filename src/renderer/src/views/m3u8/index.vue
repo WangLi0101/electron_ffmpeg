@@ -25,7 +25,24 @@ http://b.m3u8----fileb"
         >{{ outputFolder ? 'change' : 'select' }}folder</el-button
       >
     </div>
-
+    <div class="info flex items-center mt-4 justify-between">
+      <div class="item">
+        <span>total:</span>
+        <span class="font-bold">{{ tableData.length }}</span>
+      </div>
+      <div class="item">
+        <span>success:</span>
+        <span class="text-green-500 font-bold">{{ downStatus.successCount }}</span>
+      </div>
+      <div class="item">
+        <span>error:</span>
+        <span class="text-red-500 font-bold">{{ downStatus.errorCount }}</span>
+      </div>
+      <div class="item">
+        <span>downloading:</span>
+        <span class="text-[#4069ed] font-bold">{{ downStatus.downloadingCount }}</span>
+      </div>
+    </div>
     <el-table :data="tableData" style="width: 100%" border class="mt-4">
       <el-table-column label="#" type="index" width="50" align="center" />
       <el-table-column prop="name" label="name" show-overflow-tooltip />
@@ -67,7 +84,7 @@ http://b.m3u8----fileb"
 <script setup lang="ts">
 import { Icon as IconifyIcon } from '@iconify/vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import PlayDialog from './components/PlayDialog.vue'
 
 const text = ref('')
@@ -79,6 +96,12 @@ interface TableData {
   outputPath: string
 }
 const tableData = ref<TableData[]>([])
+const downStatus = computed(() => {
+  const successCount = tableData.value.filter((el) => el.status === 'success').length
+  const errorCount = tableData.value.filter((el) => el.status === 'error').length
+  const downloadingCount = tableData.value.filter((el) => el.status === 'downloading').length
+  return { successCount, errorCount, downloadingCount }
+})
 const handleM3u8 = async () => {
   const arr = text.value.split('\n').filter(Boolean)
   tableData.value = arr.map((item) => {
