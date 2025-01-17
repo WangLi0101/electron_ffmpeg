@@ -26,29 +26,29 @@ http://b.m3u8----fileb"
       >
     </div>
     <div class="mt-4">
-      <span>maxCount：</span>
+      <span class="text-[var(--el-color-primary)]">maxCount：</span>
       <el-slider v-model="maxCount" :min="1" :max="30" />
     </div>
     <div class="info flex items-center mt-4 justify-between">
       <div class="item">
-        <span>total:</span>
+        <span>total: </span>
         <span class="font-bold">{{ tableData.length }}</span>
       </div>
       <div class="item">
-        <span>success:</span>
+        <span>success: </span>
         <span class="text-green-500 font-bold">{{ downStatus.successCount }}</span>
       </div>
       <div class="item">
-        <span>error:</span>
+        <span>error: </span>
         <span class="text-red-500 font-bold">{{ downStatus.errorCount }}</span>
       </div>
       <div class="item">
-        <span>downloading:</span>
+        <span>downloading: </span>
         <span class="text-[#4069ed] font-bold">{{ downStatus.downloadingCount }}</span>
       </div>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" border class="mt-4">
+    <el-table :data="tableData" style="width: 100%" border class="mt-4" height="550px">
       <el-table-column label="#" type="index" width="50" align="center" />
       <el-table-column prop="name" label="name" show-overflow-tooltip />
       <el-table-column prop="url" label="URL" show-overflow-tooltip />
@@ -93,7 +93,7 @@ import { computed, ref } from 'vue'
 import PlayDialog from './components/PlayDialog.vue'
 
 const text = ref('')
-type Status = 'init' | 'downloading' | 'success' | 'error'
+type Status = 'pending' | 'downloading' | 'success' | 'error'
 interface TableData {
   name: string
   url: string
@@ -142,7 +142,7 @@ const handleM3u8 = async () => {
   const arr = text.value.split('\n').filter(Boolean)
   tableData.value = arr.map((item) => {
     const [url, name] = item.split('----')
-    return { url, name, status: 'init', outputPath: '' }
+    return { url, name, status: 'pending', outputPath: '' }
   })
   if (!tableData.value.length) {
     ElMessage.warning('请输入下载地址')
@@ -162,7 +162,7 @@ const handleM3u8 = async () => {
 }
 const getStatus = (status: Status) => {
   switch (status) {
-    case 'init':
+    case 'pending':
       return 'info'
     case 'downloading':
       return 'primary'
