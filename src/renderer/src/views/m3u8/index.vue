@@ -25,6 +25,10 @@ http://b.m3u8----fileb"
         >{{ outputFolder ? 'change' : 'select' }}folder</el-button
       >
     </div>
+    <div class="mt-4">
+      <span>maxCount：</span>
+      <el-slider v-model="maxCount" :min="1" :max="30" />
+    </div>
     <div class="info flex items-center mt-4 justify-between">
       <div class="item">
         <span>total:</span>
@@ -43,6 +47,7 @@ http://b.m3u8----fileb"
         <span class="text-[#4069ed] font-bold">{{ downStatus.downloadingCount }}</span>
       </div>
     </div>
+
     <el-table :data="tableData" style="width: 100%" border class="mt-4">
       <el-table-column label="#" type="index" width="50" align="center" />
       <el-table-column prop="name" label="name" show-overflow-tooltip />
@@ -102,6 +107,37 @@ const downStatus = computed(() => {
   const downloadingCount = tableData.value.filter((el) => el.status === 'downloading').length
   return { successCount, errorCount, downloadingCount }
 })
+const maxCount = ref(20)
+const downLoadAll = () => {
+  let currentIndex = 0
+  let activeCount = 0
+  const downloadNext = () => {
+    if (currentIndex >= tableData.value.length) {
+      return
+    }
+    if (activeCount >= maxCount.value) {
+      return
+    }
+    const item = tableData.value[currentIndex]
+    currentIndex++
+    activeCount++
+    item.status = 'downloading'
+    window.ffmpeg
+      .m3u8({ url: item.url, name: item.name, outputPath: outputFolder.value })
+      .then((res) => {
+        item.status = res.isSuccess ? 'success' : 'error'
+        item.outputPath = res.outputPath
+      })
+      .finally(() => {
+        activeCount--
+        downloadNext()
+      })
+  }
+  for (let i = 0; i < maxCount.value; i++) {
+    downloadNext()
+  }
+}
+
 const handleM3u8 = async () => {
   const arr = text.value.split('\n').filter(Boolean)
   tableData.value = arr.map((item) => {
@@ -121,15 +157,7 @@ const handleM3u8 = async () => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    tableData.value.forEach((item) => {
-      item.status = 'downloading'
-      window.ffmpeg
-        .m3u8({ url: item.url, name: item.name, outputPath: outputFolder.value })
-        .then((res) => {
-          item.status = res.isSuccess ? 'success' : 'error'
-          item.outputPath = res.outputPath
-        })
-    })
+    downLoadAll()
   })
 }
 const getStatus = (status: Status) => {
