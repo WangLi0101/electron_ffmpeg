@@ -21,6 +21,13 @@ export default defineConfig({
         '#': resolve('src')
       }
     },
-    plugins: [vue()]
+    plugins: [vue()],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler' // or "modern"
+        }
+      }
+    }
   }
 })
