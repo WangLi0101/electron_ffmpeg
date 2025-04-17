@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { setupIPC } from '../preload/ffmpeg/handler/index'
+import { setupAutoUpdater } from './update'
 
 function createWindow(): void {
   // Create the browser window.
@@ -38,6 +39,9 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  // 设置自动更新
+  setupAutoUpdater()
 }
 
 // This method will be called when Electron has finished

@@ -1,6 +1,6 @@
 {
   "name": "electron-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -20,10 +20,47 @@
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux"
   },
+  "build": {
+    "appId": "com.example.electron-app",
+    "productName": "Electron App",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out",
+      "!**/*.ts",
+      "!*.map",
+      "!package.json",
+      "!package-lock.json"
+    ],
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://betterme-blog.oss-cn-beijing.aliyuncs.com/electron/"
+      }
+    ]
+  },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "@element-plus/icons-vue": "^2.3.1",
+    "electron-log": "^5.3.3",
     "electron-updater": "^6.1.7",
     "element-plus": "^2.9.1",
     "lottie-web": "^5.12.2",
